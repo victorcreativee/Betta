@@ -9,7 +9,6 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
-        <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
         <Route path="/budgets" element={<Layout><Budgets /></Layout>} />
         <Route path="/goals" element={<Layout><Goals /></Layout>} />
         {/* More pages soon */}

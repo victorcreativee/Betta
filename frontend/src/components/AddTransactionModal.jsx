@@ -15,36 +15,67 @@ export default function AddTransactionModal({ isOpen, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(form); // Later: send to backend
+    console.log("Transaction submitted:", form);
     onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-lg shadow-md w-full max-w-md"
+        className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md space-y-4"
       >
-        <h2 className="text-lg font-bold mb-4">Add Transaction</h2>
+        <h2 className="text-lg font-semibold text-gray-700">Add New Transaction</h2>
 
-        <input name="amount" placeholder="Amount" className="w-full p-2 mb-2 border rounded" onChange={handleChange} required />
-        
-        <select name="type" className="w-full p-2 mb-2 border rounded" onChange={handleChange}>
+        <input
+          type="number"
+          name="amount"
+          placeholder="Amount"
+          value={form.amount}
+          onChange={handleChange}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary focus:outline-none"
+          required
+        />
+
+        <select
+          name="type"
+          value={form.type}
+          onChange={handleChange}
+          className="w-full p-2 border border-gray-300 rounded-lg"
+        >
           <option value="expense">Expense</option>
           <option value="income">Income</option>
         </select>
 
-        <input name="category" placeholder="Category" className="w-full p-2 mb-2 border rounded" onChange={handleChange} />
-        
-        <input type="date" name="date" className="w-full p-2 mb-2 border rounded" onChange={handleChange} />
-        
-        <textarea name="note" placeholder="Note" className="w-full p-2 mb-4 border rounded" onChange={handleChange} />
+        <input
+          name="category"
+          placeholder="Category"
+          value={form.category}
+          onChange={handleChange}
+          className="w-full p-2 border border-gray-300 rounded-lg"
+        />
 
-        <div className="flex justify-between">
+        <input
+          type="date"
+          name="date"
+          value={form.date}
+          onChange={handleChange}
+          className="w-full p-2 border border-gray-300 rounded-lg"
+        />
+
+        <textarea
+          name="note"
+          placeholder="Note (optional)"
+          value={form.note}
+          onChange={handleChange}
+          className="w-full p-2 border border-gray-300 rounded-lg"
+        />
+
+        <div className="flex justify-end gap-4 pt-2">
           <button type="button" onClick={onClose} className="text-gray-500">Cancel</button>
-          <button type="submit" className="bg-primary text-white px-4 py-2 rounded">Save</button>
+          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-lg">Save</button>
         </div>
       </form>
     </div>
