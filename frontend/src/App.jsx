@@ -1,11 +1,14 @@
-import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Dashboard from "./pages/Dashboard";
 
-function App() {
+export default function App() {
   return (
-    <div className="min-h-screen bg-softBlue text-primary flex items-center justify-center">
-      <h1 className="text-4xl font-bold">Welcome to Betta Budget App</h1>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
+        {/* More pages soon */}
+      </Routes>
+    </Router>
   );
 }
-
-export default App;
