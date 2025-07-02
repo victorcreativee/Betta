@@ -8,7 +8,6 @@ import Goals from "./pages/Goals";
 export default function App() {
   return (
     <Router>
-    <div className="min-h-screen bg-[#F9FBFD] dark:bg-gray-900 text-gray-800 dark:text-gray-100"></div>
       <Routes>
       {/* Landing page at root */}
         <Route path="/" element={<Landing />} />
@@ -17,8 +16,6 @@ export default function App() {
         <Route path="/goals" element={<Layout><Goals /></Layout>} />
         {/* More pages soon */}
       </Routes>
-      </div>
     </Router>
-    /d
   );
 }
