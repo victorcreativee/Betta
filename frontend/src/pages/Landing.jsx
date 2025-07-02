@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import FeatureCard from "../components/FeatureCard";
 import mockupImage from "../assets/mockup.png";
+import { useInView } from "react-intersection-observer";
 
 export default function Landing() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white text-gray-800 flex flex-col">
+
       {/* Navbar */}
       <motion.header
         className="flex justify-between items-center px-10 py-6"
@@ -59,52 +60,234 @@ export default function Landing() {
           </Link>
         </motion.div>
       </main>
-    {/* Mockup Showcase Section */}
-        <section className="mt-16 px-6 py-20 bg-blue-50 relative overflow-hidden">
+
+      {/* SVG Divider */}
+      <div className="w-full overflow-hidden leading-none rotate-180 -mb-1">
+        <svg viewBox="0 0 500 150" preserveAspectRatio="none" className="w-full h-20">
+          <path
+            d="M0.00,49.98 C150.00,150.00 349.84,-50.00 500.00,49.98 L500.00,150.00 L0.00,150.00 Z"
+            style={{ stroke: "none", fill: "#F9FBFD" }}
+          />
+        </svg>
+      </div>
+
+      {/* Mockup Showcase Section */}
+      <section className="mt-0 px-6 py-20 bg-gradient-to-b from-white via-blue-50 to-blue-100">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16">
-            <div className="md:w-1/2 text-center md:text-left">
-            <h3 className="text-3xl font-bold text-gray-800 mb-4">
-                All your money in one place
-            </h3>
-            <p className="text-gray-600 mb-6">
-                Easily monitor spending and visualize your goals using Betta’s dashboard.
-                Clean charts, instant insights, and one-click tracking.
-            </p>
-            <Link to="/dashboard" className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-600 transition">
-                Explore Dashboard
-            </Link>
-            </div>
+          
+          {/* Scroll-Animated Text Block */}
+          <ScrollAnimatedText />
 
-            <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="md:w-1/2"
-            >
-            <img
-              src={mockupImage}
-              alt="App Mockup"
-              className="rounded-xl shadow-2xl w-full max-w-md mx-auto"
-            />
+          {/* Scroll-Animated Mockup Image */}
+          <ScrollAnimatedMockup />
 
-            </motion.div>
-        </div>
-        </section>
-
-      {/* Features Section */}
-      <section id="features" className="px-6 py-16 bg-white">
-        <h3 className="text-center text-2xl font-semibold text-gray-800 mb-10">Why Betta?</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          <FeatureCard icon="📈" title="Track Spending" description="See where your money goes in real time." />
-          <FeatureCard icon="🎯" title="Set Goals" description="Save for the things that matter most." />
-          <FeatureCard icon="📊" title="Visualize Trends" description="Get insights into your spending habits." />
         </div>
       </section>
       
-      <footer className="text-center text-sm py-6 border-t border-gray-200 text-gray-500">
-        © 2025 Betta. All rights reserved.
-      </footer>
+    {/* Feature Section */}
+    <section id="features" className="bg-white py-24 px-6">
+      <div className="max-w-6xl mx-auto text-center mb-16">
+        <h2 className="text-4xl font-bold text-gray-800 mb-4">Smart Features That Empower You</h2>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+          Betta gives you full control of your money with powerful budgeting tools and visual insights.
+        </p>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+        <FeatureItem
+          title="Real-Time Tracking"
+          text="Track income and expenses as they happen — always know where your money is."
+        />
+        <FeatureItem
+          title="Goal Setting"
+          text="Set savings goals and monitor progress visually, so you stay motivated and accountable."
+        />
+        <FeatureItem
+          title="Visual Insights"
+          text="Pie charts, line graphs, and radial progress bars to help you understand your habits."
+        />
+        <FeatureItem
+          title="Simple Interface"
+          text="Designed to feel effortless — smooth UI with a calming light-blue theme."
+        />
+      </div>
+    </section>
+
+    {/* Value Highlights Section */}
+    <section className="bg-gradient-to-b from-blue-100 via-white to-white py-24 px-6">
+      <div className="max-w-6xl mx-auto text-center mb-16">
+        <h2 className="text-4xl font-bold text-gray-800 mb-4">Why Betta Works for You</h2>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+          Whether you're budgeting for groceries or planning long-term goals, Betta is designed to guide every financial decision.
+        </p>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <ValueItem
+          title="Built for Simplicity"
+          text="Minimal clicks. Fast input. Everything where you expect it."
+        />
+        <ValueItem
+          title="Designed for Clarity"
+          text="No clutter — just numbers and insights that make sense."
+        />
+        <ValueItem
+          title="Goals Made Visible"
+          text="Your progress is always visual — not just numbers, but purpose."
+        />
+      </div>
+    </section>
+
+    {/* Testimonials Section */}
+    <section className="bg-white py-24 px-6">
+      <div className="max-w-4xl mx-auto text-center mb-12">
+        <h2 className="text-4xl font-bold text-gray-800 mb-4">What People Say</h2>
+        <p className="text-gray-600">Trusted by everyday users who wanted a better way to manage their money.</p>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <TestimonialCard
+          name="Sarah M."
+          text="Betta completely changed the way I budget. Simple and stress-free."
+        />
+        <TestimonialCard
+          name="James L."
+          text="I finally feel in control of my finances thanks to the goal setting tools."
+        />
+        <TestimonialCard
+          name="Lina K."
+          text="Beautiful interface and very intuitive. Love the visualizations!"
+        />
+      </div>
+    </section>
+
+    {/* CTA Banner */}
+    <section className="bg-blue-600 text-white py-20 px-6 text-center">
+      <h2 className="text-4xl font-bold mb-4">Take Control of Your Finances Today</h2>
+      <p className="mb-6 text-lg max-w-xl mx-auto">
+        Join hundreds already budgeting smarter with Betta. It’s fast, free, and easy to get started.
+      </p>
+      <Link
+        to="/dashboard"
+        className="inline-block bg-white text-blue-600 font-semibold px-6 py-3 rounded-lg hover:bg-blue-100 transition"
+      >
+        Launch Dashboard
+      </Link>
+    </section>
+
+
+    {/* Footer */}
+    <footer className="bg-[#f0f4f8] py-10 px-6 text-center text-sm text-gray-500">
+      <div className="max-w-6xl mx-auto">
+        <p>© {new Date().getFullYear()} Betta — All rights reserved.</p>
+        <div className="flex justify-center space-x-4 mt-2">
+          <Link to="/" className="hover:underline">Home</Link>
+          <Link to="/dashboard" className="hover:underline">Dashboard</Link>
+          <a href="#features" className="hover:underline">Features</a>
+        </div>
+      </div>
+    </footer>
+
     </div>
   );
+
+  function ScrollAnimatedText() {
+    const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
+  
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, x: -30 }}
+        animate={inView ? { opacity: 1, x: 0 } : {}}
+        transition={{ duration: 0.6 }}
+        className="md:w-1/2 text-center md:text-left"
+      >
+        <h3 className="text-3xl font-bold text-gray-800 mb-4">
+          All your money in one place
+        </h3>
+        <p className="text-gray-600 mb-6">
+          Easily monitor spending and visualize your goals using Betta’s dashboard.
+          Clean charts, instant insights, and one-click tracking.
+        </p>
+        <Link
+          to="/dashboard"
+          className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-600 transition"
+        >
+          Explore Dashboard
+        </Link>
+      </motion.div>
+    );
+  }
+  
+  function ScrollAnimatedMockup() {
+    const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.3 });
+  
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 40 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.8 }}
+        className="md:w-1/2"
+      >
+        <img
+          src={mockupImage}
+          alt="App Mockup"
+          className="rounded-xl shadow-2xl w-full max-w-md mx-auto"
+        />
+      </motion.div>
+    );
+  }
+
+  function FeatureItem({ title, text }) {
+    const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
+  
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 20 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.6 }}
+        className="bg-[#F9FBFD] p-6 rounded-xl shadow-md hover:shadow-xl transition"
+      >
+        <h3 className="text-xl font-semibold text-blue-600 mb-2">{title}</h3>
+        <p className="text-gray-700">{text}</p>
+      </motion.div>
+    );
+  }
+  
+  function ValueItem({ title, text }) {
+    const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.15 });
+  
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 30 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.5 }}
+        className="bg-white p-6 rounded-xl shadow-sm border hover:shadow-lg transition"
+      >
+        <h4 className="text-lg font-semibold text-blue-600 mb-2">{title}</h4>
+        <p className="text-gray-700 text-sm">{text}</p>
+      </motion.div>
+    );
+  }
+  
+  function TestimonialCard({ name, text }) {
+    const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
+  
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={inView ? { opacity: 1, scale: 1 } : {}}
+        transition={{ duration: 0.5 }}
+        className="bg-blue-50 p-6 rounded-xl shadow-sm border border-blue-100"
+      >
+        <p className="text-gray-700 italic mb-4">“{text}”</p>
+        <h4 className="text-blue-700 font-semibold">{name}</h4>
+      </motion.div>
+    );
+  }
+  
 }
