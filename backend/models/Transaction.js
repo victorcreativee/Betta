@@ -10,19 +10,19 @@ const transactionSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    category: {
-      type: String,
+    type: { type: String, 
+      enum: ["income", "expense"], 
+      required: true 
     },
     date: {
-      type: Date,
-      default: Date.now,
+       type: Date, 
+       default: Date.now 
+      },
+    category: {
+       type: String, 
+       default: "General" 
+      },
     },
-    type: {
-      type: String,
-      enum: ["income", "expense"],
-      required: true,
-    },
-  },
   { timestamps: true }
 );
 

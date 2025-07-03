@@ -5,22 +5,31 @@ export default function AddTransactionModal({ isOpen, onClose, onSuccess }) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("expense");
+  const [date, setDate] = useState("");
+  const [category, setCategory] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submitting transaction...");
 
     try {
       await axios.post("/transactions", {
         title,
         amount: parseFloat(amount),
         type,
+        date,
+        category,
       });
 
+      // Reset fields
       setTitle("");
       setAmount("");
       setType("expense");
-      onSuccess(); // refresh data
-      onClose();   // close modal
+      setDate("");
+      setCategory("");
+
+      onSuccess();
+      onClose();
     } catch (err) {
       console.error("Failed to add transaction:", err.message);
     }
@@ -63,6 +72,22 @@ export default function AddTransactionModal({ isOpen, onClose, onSuccess }) {
           <option value="income">Income</option>
         </select>
 
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="w-full px-4 py-2 border rounded"
+          required
+        />
+
+        <input
+          type="text"
+          placeholder="Category (e.g., Food)"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="w-full px-4 py-2 border rounded"
+        />
+
         <div className="flex justify-end gap-4">
           <button
             type="button"
@@ -73,7 +98,7 @@ export default function AddTransactionModal({ isOpen, onClose, onSuccess }) {
           </button>
           <button
             type="submit"
-            className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-600"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
           >
             Add
           </button>
