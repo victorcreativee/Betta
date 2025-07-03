@@ -1,81 +1,82 @@
 import { useState } from "react";
+import axios from "../api/axios";
 
-export default function AddTransactionModal({ isOpen, onClose }) {
-  const [form, setForm] = useState({
-    amount: '',
-    type: 'expense',
-    category: '',
-    note: '',
-    date: ''
-  });
+export default function AddTransactionModal({ isOpen, onClose, onSuccess }) {
+  const [title, setTitle] = useState("");
+  const [amount, setAmount] = useState("");
+  const [type, setType] = useState("expense");
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Transaction submitted:", form);
-    onClose();
+
+    try {
+      await axios.post("/transactions", {
+        title,
+        amount: parseFloat(amount),
+        type,
+      });
+
+      setTitle("");
+      setAmount("");
+      setType("expense");
+      onSuccess(); // refresh data
+      onClose();   // close modal
+    } catch (err) {
+      console.error("Failed to add transaction:", err.message);
+    }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md space-y-4"
+        className="bg-white p-6 rounded-lg shadow-lg space-y-4 w-[90%] max-w-md"
       >
-        <h2 className="text-lg font-semibold text-gray-700">Add New Transaction</h2>
+        <h3 className="text-lg font-semibold text-gray-800">Add Transaction</h3>
+
+        <input
+          type="text"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full px-4 py-2 border rounded"
+          required
+        />
 
         <input
           type="number"
-          name="amount"
           placeholder="Amount"
-          value={form.amount}
-          onChange={handleChange}
-          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary focus:outline-none"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          className="w-full px-4 py-2 border rounded"
           required
         />
 
         <select
-          name="type"
-          value={form.type}
-          onChange={handleChange}
-          className="w-full p-2 border border-gray-300 rounded-lg"
+          value={type}
+          onChange={(e) => setType(e.target.value)}
+          className="w-full px-4 py-2 border rounded"
         >
           <option value="expense">Expense</option>
           <option value="income">Income</option>
         </select>
 
-        <input
-          name="category"
-          placeholder="Category"
-          value={form.category}
-          onChange={handleChange}
-          className="w-full p-2 border border-gray-300 rounded-lg"
-        />
-
-        <input
-          type="date"
-          name="date"
-          value={form.date}
-          onChange={handleChange}
-          className="w-full p-2 border border-gray-300 rounded-lg"
-        />
-
-        <textarea
-          name="note"
-          placeholder="Note (optional)"
-          value={form.note}
-          onChange={handleChange}
-          className="w-full p-2 border border-gray-300 rounded-lg"
-        />
-
-        <div className="flex justify-end gap-4 pt-2">
-          <button type="button" onClick={onClose} className="text-gray-500">Cancel</button>
-          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-lg">Save</button>
+        <div className="flex justify-end gap-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 text-gray-500 hover:text-black"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Add
+          </button>
         </div>
       </form>
     </div>

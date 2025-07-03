@@ -8,6 +8,8 @@ import AddTransactionModal from "../components/AddTransactionModal";
 
 export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const handleSuccess = () => setRefreshKey((prev) => prev + 1);
 
   return (
     <div className="bg-[#F9FBFD] min-h-screen pl-20">
@@ -31,8 +33,10 @@ export default function Dashboard() {
           <RadialProgress />
         </div>
 
-        <RecentTransactions />
-        <AddTransactionModal isOpen={showModal} onClose={() => setShowModal(false)} />
+        <RecentTransactions key={refreshKey} />
+        <AddTransactionModal isOpen={showModal}
+        onClose={() => setShowModal(false)} 
+        onSuccess={handleSuccess}/>
       </div>
     </div>
   );
