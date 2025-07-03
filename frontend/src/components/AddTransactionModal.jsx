@@ -1,27 +1,56 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "../api/axios";
+import { toast } from "react-toastify";
 
-export default function AddTransactionModal({ isOpen, onClose, onSuccess }) {
+export default function AddTransactionModal({
+  isOpen,
+  onClose,
+  onSuccess,
+  transaction = null,  
+  mode = "create",    
+}) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("expense");
   const [date, setDate] = useState("");
   const [category, setCategory] = useState("");
+  const [loading, setLoading] = useState(false); 
+
+  useEffect(() => {
+    if (transaction) {
+      setTitle(transaction.title);
+      setAmount(transaction.amount);
+      setType(transaction.type);
+      setDate(transaction.date.split("T")[0]);
+      setCategory(transaction.category);
+    }
+  }, [transaction]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting transaction...");
+    setLoading(true);
 
     try {
-      await axios.post("/transactions", {
-        title,
-        amount: parseFloat(amount),
-        type,
-        date,
-        category,
-      });
+      if (mode === "edit") {
+        await axios.put(`/transactions/${transaction._id}`, {
+          title,
+          amount: parseFloat(amount),
+          type,
+          date,
+          category,
+        });
+        toast.success("Transaction updated!");
+      } else {
+        await axios.post("/transactions", {
+          title,
+          amount: parseFloat(amount),
+          type,
+          date,
+          category,
+        });
+        toast.success("Transaction added!");
+      }
 
-      // Reset fields
       setTitle("");
       setAmount("");
       setType("expense");
@@ -31,7 +60,10 @@ export default function AddTransactionModal({ isOpen, onClose, onSuccess }) {
       onSuccess();
       onClose();
     } catch (err) {
-      console.error("Failed to add transaction:", err.message);
+      console.error("Failed:", err.message);
+      toast.error("Something went wrong.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,7 +75,9 @@ export default function AddTransactionModal({ isOpen, onClose, onSuccess }) {
         onSubmit={handleSubmit}
         className="bg-white p-6 rounded-lg shadow-lg space-y-4 w-[90%] max-w-md"
       >
-        <h3 className="text-lg font-semibold text-gray-800">Add Transaction</h3>
+        <h3 className="text-lg font-semibold text-gray-800">
+          {mode === "edit" ? "Edit Transaction" : "Add Transaction"}
+        </h3>
 
         <input
           type="text"
@@ -98,9 +132,18 @@ export default function AddTransactionModal({ isOpen, onClose, onSuccess }) {
           </button>
           <button
             type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            disabled={loading}
+            className={`px-4 py-2 rounded text-white ${
+              loading ? "bg-blue-300" : "bg-blue-500 hover:bg-blue-600"
+            }`}
           >
-            Add
+            {loading
+              ? mode === "edit"
+                ? "Updating..."
+                : "Adding..."
+              : mode === "edit"
+              ? "Update"
+              : "Add"}
           </button>
         </div>
       </form>
