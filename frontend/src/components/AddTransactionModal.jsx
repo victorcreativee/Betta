@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "../api/axios";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import toast from "react-hot-toast";
+
 
 export default function AddTransactionModal({
   isOpen,
@@ -28,6 +30,12 @@ export default function AddTransactionModal({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Simple validation
+  if (!title || !amount || !date) {
+    toast.error("Please fill all required fields");
+    return;
+  }
     setLoading(true);
 
     try {

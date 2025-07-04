@@ -1,5 +1,6 @@
-const Transaction = require("../models/Transaction");
+const Transaction = require("../models/transaction");
 
+// Create Transaction
 const createTransaction = async (req, res) => {
   try {
     const { title, amount, type, date, category } = req.body;
@@ -18,15 +19,30 @@ const createTransaction = async (req, res) => {
   }
 };
 
+// Get (Filtered) Transactions
 const getTransactions = async (req, res) => {
   try {
-    const transactions = await Transaction.find().sort({ date: -1 });
+    const { category, start, end } = req.query;
+    const filter = {};
+
+    if (category) {
+      filter.category = category;
+    }
+
+    if (start || end) {
+      filter.date = {};
+      if (start) filter.date.$gte = new Date(start);
+      if (end) filter.date.$lte = new Date(end);
+    }
+
+    const transactions = await Transaction.find(filter).sort({ date: -1 });
     res.json(transactions);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Failed to get transactions" });
   }
 };
 
+// Delete Transaction
 const deleteTransaction = async (req, res) => {
   try {
     const { id } = req.params;
@@ -37,6 +53,7 @@ const deleteTransaction = async (req, res) => {
   }
 };
 
+// Update Transaction
 const updateTransaction = async (req, res) => {
   try {
     const { id } = req.params;
@@ -47,16 +64,17 @@ const updateTransaction = async (req, res) => {
   }
 };
 
+// Get Summary (Income / Expenses / Balance)
 const getSummary = async (req, res) => {
   try {
     const transactions = await Transaction.find();
 
     const income = transactions
-      .filter(t => t.type === "income")
+      .filter((t) => t.type === "income")
       .reduce((sum, t) => sum + t.amount, 0);
 
     const expenses = transactions
-      .filter(t => t.type === "expense")
+      .filter((t) => t.type === "expense")
       .reduce((sum, t) => sum + t.amount, 0);
 
     const balance = income - expenses;
@@ -67,7 +85,7 @@ const getSummary = async (req, res) => {
   }
 };
 
-
+//Export all handlers
 module.exports = {
   createTransaction,
   getTransactions,
