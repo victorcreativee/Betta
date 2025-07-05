@@ -11,6 +11,7 @@ const createTransaction = async (req, res) => {
       type,
       date,
       category,
+      user: req.user._id, // 🔐 Link to logged-in user
     });
 
     res.status(201).json(transaction);
@@ -23,7 +24,7 @@ const createTransaction = async (req, res) => {
 const getTransactions = async (req, res) => {
   try {
     const { category, start, end } = req.query;
-    const filter = {};
+    const filter = { user: req.user._id }; // 🔐 Filter only this user
 
     if (category) {
       filter.category = category;
@@ -46,7 +47,7 @@ const getTransactions = async (req, res) => {
 const deleteTransaction = async (req, res) => {
   try {
     const { id } = req.params;
-    await Transaction.findByIdAndDelete(id);
+    await Transaction.findOneAndDelete({ _id: id, user: req.user._id });
     res.status(200).json({ message: "Transaction deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -57,7 +58,11 @@ const deleteTransaction = async (req, res) => {
 const updateTransaction = async (req, res) => {
   try {
     const { id } = req.params;
-    const updated = await Transaction.findByIdAndUpdate(id, req.body, { new: true });
+    const updated = await Transaction.findOneAndUpdate(
+      { _id: id, user: req.user._id },
+      req.body,
+      { new: true }
+    );
     res.status(200).json(updated);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -67,7 +72,8 @@ const updateTransaction = async (req, res) => {
 // Get Summary (Income / Expenses / Balance)
 const getSummary = async (req, res) => {
   try {
-    const transactions = await Transaction.find();
+    const transactions = await Transaction.find({ user: req.user._id });
+
 
     const income = transactions
       .filter((t) => t.type === "income")
