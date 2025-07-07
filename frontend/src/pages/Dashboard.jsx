@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import SummaryCard from "../components/SummaryCard";
 import ExpenseLineChart from "../components/LineChart";
-import RadialProgress from "../components/RadialProgress";
+import SpendingBreakdownChart from "../components/SpendingBreakdownChart";
 import RecentTransactions from "../components/RecentTransactions";
 import AddTransactionModal from "../components/AddTransactionModal";
 import DashboardCard from "../components/DashboardCard";
@@ -140,7 +140,7 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <ExpenseLineChart refreshKey={refreshKey} />
-          <RadialProgress />
+          <SpendingBreakdownChart data={topCategories} />
         </div>
 
         <RecentTransactions onSuccess={handleSuccess} key={refreshKey} />
