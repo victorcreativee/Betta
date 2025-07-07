@@ -1,22 +1,20 @@
 import { useState, useEffect } from "react";
 import axios from "../api/axios";
-// import { toast } from "react-toastify";
 import toast from "react-hot-toast";
-
 
 export default function AddTransactionModal({
   isOpen,
   onClose,
   onSuccess,
-  transaction = null,  
-  mode = "create",    
+  transaction = null,
+  mode = "create",
 }) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("expense");
   const [date, setDate] = useState("");
   const [category, setCategory] = useState("");
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (transaction) {
@@ -31,34 +29,57 @@ export default function AddTransactionModal({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Simple validation
-  if (!title || !amount || !date) {
-    toast.error("Please fill all required fields");
-    return;
-  }
+    if (!title || !amount || !date) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
     setLoading(true);
 
     try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const token = user?.token;
+
+      if (!token) {
+        toast.error("No token found. Please log in again.");
+        return;
+      }
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
       if (mode === "edit") {
-        await axios.put(`/transactions/${transaction._id}`, {
-          title,
-          amount: parseFloat(amount),
-          type,
-          date,
-          category,
-        });
+        await axios.put(
+          `/transactions/${transaction._id}`,
+          {
+            title,
+            amount: parseFloat(amount),
+            type,
+            date,
+            category,
+          },
+          config
+        );
         toast.success("Transaction updated!");
       } else {
-        await axios.post("/transactions", {
-          title,
-          amount: parseFloat(amount),
-          type,
-          date,
-          category,
-        });
+        await axios.post(
+          "/transactions",
+          {
+            title,
+            amount: parseFloat(amount),
+            type,
+            date,
+            category,
+          },
+          config
+        );
         toast.success("Transaction added!");
       }
 
+      // Reset form
       setTitle("");
       setAmount("");
       setType("expense");
@@ -68,7 +89,7 @@ export default function AddTransactionModal({
       onSuccess();
       onClose();
     } catch (err) {
-      console.error("Failed:", err.message);
+      console.error("Failed:", err.response?.data || err.message);
       toast.error("Something went wrong.");
     } finally {
       setLoading(false);

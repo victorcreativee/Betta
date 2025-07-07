@@ -74,7 +74,6 @@ const getSummary = async (req, res) => {
   try {
     const transactions = await Transaction.find({ user: req.user._id });
 
-
     const income = transactions
       .filter((t) => t.type === "income")
       .reduce((sum, t) => sum + t.amount, 0);

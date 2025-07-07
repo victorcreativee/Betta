@@ -3,7 +3,8 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const userRoutes = require('./routes/userRoutes');
-
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const goalRoutes = require("./routes/goalRoutes");
 
 // Load env variables
 dotenv.config();
@@ -24,6 +25,9 @@ app.get("/", (req, res) => res.send("🎉 Betta backend running"));
 
 app.use('/api/users', userRoutes);
 
+app.use("/api/dashboard", dashboardRoutes);
+
+app.use("/api/goals", goalRoutes);
 
 const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => console.log(`Server on http://localhost:${PORT}`));

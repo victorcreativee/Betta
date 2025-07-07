@@ -1,16 +1,31 @@
 import { useEffect, useState } from "react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import axios from "../api/axios";
 
-export default function ExpenseLineChart() {
+export default function ExpenseLineChart({ refreshKey }) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
     const fetchChartData = async () => {
       try {
-        const res = await axios.get("/transactions");
-        const txs = res.data;
+        const user = JSON.parse(localStorage.getItem("user"));
+        const token = user?.token;
 
+        const res = await axios.get("/transactions", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const txs = res.data;
         const monthlyData = {};
 
         txs.forEach((tx) => {
@@ -28,8 +43,13 @@ export default function ExpenseLineChart() {
           }
         });
 
-        const monthOrder = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const chartData = monthOrder.map((month) => monthlyData[month] || { month, income: 0, expense: 0 });
+        const monthOrder = [
+          "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+        const chartData = monthOrder.map(
+          (month) => monthlyData[month] || { month, income: 0, expense: 0 }
+        );
 
         setData(chartData);
       } catch (err) {
@@ -38,11 +58,13 @@ export default function ExpenseLineChart() {
     };
 
     fetchChartData();
-  }, []);
+  }, [refreshKey]); // re-fetches on update
 
   return (
     <div className="bg-white p-6 rounded-lg shadow w-full">
-      <h3 className="text-md font-semibold text-gray-700 mb-4">Monthly Income vs Expense</h3>
+      <h3 className="text-md font-semibold text-gray-700 mb-4">
+        Monthly Income vs Expense
+      </h3>
       <ResponsiveContainer width="100%" height={280}>
         <LineChart data={data}>
           <XAxis dataKey="month" />
@@ -56,3 +78,4 @@ export default function ExpenseLineChart() {
     </div>
   );
 }
+

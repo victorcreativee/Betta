@@ -8,25 +8,21 @@ export default function RecentTransactions({ onSuccess }) {
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  // Refs for filters
   const categoryRef = useRef();
   const startRef = useRef();
   const endRef = useRef();
 
-  // Filter handler
-  const handleFilter = async () => {
-    try {
-      const params = {};
-      if (categoryRef.current.value) params.category = categoryRef.current.value;
-      if (startRef.current.value) params.start = startRef.current.value;
-      if (endRef.current.value) params.end = endRef.current.value;
-
-      const res = await axios.get("/transactions", { params });
-      setTransactions(res.data);
-    } catch (err) {
-      toast.error("Failed to filter transactions");
-      console.error(err);
-    }
+  // Get token from localStorage
+  const getAuthConfig = () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const token = user?.token;
+    return token
+      ? {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
   };
 
   // Fetch all initially
@@ -36,7 +32,7 @@ export default function RecentTransactions({ onSuccess }) {
 
   const fetchTransactions = async () => {
     try {
-      const res = await axios.get("/transactions");
+      const res = await axios.get("/transactions", getAuthConfig());
       setTransactions(res.data);
     } catch (err) {
       console.error("Failed to fetch transactions:", err.message);
@@ -44,14 +40,33 @@ export default function RecentTransactions({ onSuccess }) {
     }
   };
 
+  const handleFilter = async () => {
+    try {
+      const params = {};
+      if (categoryRef.current.value) params.category = categoryRef.current.value;
+      if (startRef.current.value) params.start = startRef.current.value;
+      if (endRef.current.value) params.end = endRef.current.value;
+
+      const res = await axios.get("/transactions", {
+        ...getAuthConfig(),
+        params,
+      });
+
+      setTransactions(res.data);
+    } catch (err) {
+      toast.error("Failed to filter transactions");
+      console.error(err);
+    }
+  };
+
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this transaction?")) return;
 
     try {
-      await axios.delete(`/transactions/${id}`);
+      await axios.delete(`/transactions/${id}`, getAuthConfig());
       toast.success("Transaction deleted.");
-      onSuccess && onSuccess(); // notify Dashboard to refresh
-      fetchTransactions(); // refresh locally
+      onSuccess && onSuccess();
+      fetchTransactions();
     } catch (err) {
       console.error("Delete failed:", err.message);
       toast.error("Failed to delete transaction.");
@@ -71,13 +86,14 @@ export default function RecentTransactions({ onSuccess }) {
           <option value="Shopping">Shopping</option>
           <option value="Rent">Rent</option>
           <option value="Salary">Code</option>
-          <option value="Trade">trade</option>
+          <option value="Trade">Trade</option>
           <option value="Design">Design</option>
-
         </select>
 
-        <label>from:</label><input ref={startRef} type="date" className="border px-3 py-2 rounded" />
-        <label>to:</label><input ref={endRef} type="date" className="border px-3 py-2 rounded" />
+        <label>From:</label>
+        <input ref={startRef} type="date" className="border px-3 py-2 rounded" />
+        <label>To:</label>
+        <input ref={endRef} type="date" className="border px-3 py-2 rounded" />
 
         <button
           onClick={handleFilter}
@@ -101,7 +117,11 @@ export default function RecentTransactions({ onSuccess }) {
               </div>
 
               <div className="flex items-center gap-4">
-                <span className={`font-semibold ${tx.type === "income" ? "text-green-600" : "text-red-600"}`}>
+                <span
+                  className={`font-semibold ${
+                    tx.type === "income" ? "text-green-600" : "text-red-600"
+                  }`}
+                >
                   ${tx.amount}
                 </span>
 
