@@ -12,6 +12,9 @@ import axios from "../api/axios";
 import { TrendingUp, Target, BarChart2 } from "lucide-react"; 
 import GoalCard from "../components/GoalCard";
 import AddGoalModal from "../components/AddGoalModal";
+import EditGoalModal from "../components/EditGoalModal";
+import DeleteConfirmModal from "../components/DeleteConfirmModal";
+
 
 
 
@@ -26,6 +29,10 @@ export default function Dashboard() {
   const [topCategories, setTopCategories] = useState([]);
   const [smartGoals, setSmartGoals] = useState([]);
   const [showGoalModal, setShowGoalModal] = useState(false);
+
+  const [showEditGoalModal, setShowEditGoalModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedGoal, setSelectedGoal] = useState(null);
 
 
   const navigate = useNavigate();
@@ -179,6 +186,14 @@ export default function Dashboard() {
               name={goal.name}
               progress={goal.progress}
               targetAmount={goal.targetAmount}
+              onEdit={() => {
+                setSelectedGoal(goal);
+                setShowEditGoalModal(true);
+              }}
+              onDelete={() => {
+                setSelectedGoal(goal);
+                setShowDeleteModal(true);
+              }}
             />
           ))}
         </div>
@@ -197,7 +212,29 @@ export default function Dashboard() {
           onClose={() => setShowGoalModal(false)}
           onSuccess={handleSuccess}
         />
+        {showEditGoalModal && selectedGoal && (
+          <EditGoalModal
+            isOpen={showEditGoalModal}
+            onClose={() => setShowEditGoalModal(false)}
+            goal={selectedGoal}
+            onSuccess={handleSuccess}
+          />
+        )}
+
+
+        {showDeleteModal && selectedGoal && (
+          <DeleteConfirmModal
+            isOpen={showDeleteModal}
+            onClose={() => setShowDeleteModal(false)}
+            goalId={selectedGoal._id}
+            onSuccess={handleSuccess}
+          />
+        )}
+
+        
               </div>
     </div>
   );
 }
+
+
