@@ -14,6 +14,7 @@ import GoalCard from "../components/GoalCard";
 import AddGoalModal from "../components/AddGoalModal";
 import EditGoalModal from "../components/EditGoalModal";
 import DeleteConfirmModal from "../components/DeleteConfirmModal";
+import AddMoneyModal from "../components/AddMoneyModal";
 
 
 
@@ -23,7 +24,11 @@ import DeleteConfirmModal from "../components/DeleteConfirmModal";
 export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [summary, setSummary] = useState({ income: 0, expenses: 0, balance: 0 });
+  const [summary, setSummary] = useState({ income: 0, 
+    expenses: 0, 
+    balance: 0, 
+    goalsSaved: 0, 
+  });
 
   const [recentTrends, setRecentTrends] = useState([]);
   const [topCategories, setTopCategories] = useState([]);
@@ -33,6 +38,8 @@ export default function Dashboard() {
   const [showEditGoalModal, setShowEditGoalModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState(null);
+  const [showAddMoneyModal, setShowAddMoneyModal] = useState(false);
+
 
 
   const navigate = useNavigate();
@@ -56,7 +63,12 @@ export default function Dashboard() {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        setSummary(res.data);
+        setSummary({
+          income: res.data.income,
+          expenses: res.data.expenses,
+          balance: res.data.balance,
+          goalsSaved: res.data.goalsSaved || 0,
+        });
       } catch (err) {
         console.error("Failed to fetch summary:", err.message);
       }
@@ -137,12 +149,21 @@ export default function Dashboard() {
           >
             + Set Goal
           </button>
+
+          <button
+            onClick={() => setShowAddMoneyModal(true)}
+            className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition"
+          >
+            + Save Money
+          </button>
+
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <SummaryCard title="Total Balance" amount={`$${summary.balance.toFixed(2)}`} color="text-blue-500" />
           <SummaryCard title="Income" amount={`$${summary.income.toFixed(2)}`} color="text-green-500" />
           <SummaryCard title="Expenses" amount={`$${summary.expenses.toFixed(2)}`} color="text-red-500" />
+          <SummaryCard title="Total Saved" amount={`$${summary?.goalsSaved.toFixed(2)}`} color="text-purple-500" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -186,6 +207,11 @@ export default function Dashboard() {
               name={goal.name}
               progress={goal.progress}
               targetAmount={goal.targetAmount}
+              savedAmount={goal.savedAmount}
+              // onAddSavings={() => {
+              //   setSelectedGoal(goal);
+              //   setShowAddMoneyModal(true);
+              // }}
               onEdit={() => {
                 setSelectedGoal(goal);
                 setShowEditGoalModal(true);
@@ -194,8 +220,11 @@ export default function Dashboard() {
                 setSelectedGoal(goal);
                 setShowDeleteModal(true);
               }}
+
             />
           ))}
+
+
         </div>
 
         </DashboardCard>
@@ -212,6 +241,14 @@ export default function Dashboard() {
           onClose={() => setShowGoalModal(false)}
           onSuccess={handleSuccess}
         />
+
+        <AddMoneyModal
+          isOpen={showAddMoneyModal}
+          onClose={() => setShowAddMoneyModal(false)}
+          goals={goals}
+          onSuccess={handleSuccess}
+        />
+
         {showEditGoalModal && selectedGoal && (
           <EditGoalModal
             isOpen={showEditGoalModal}

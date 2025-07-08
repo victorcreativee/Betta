@@ -70,6 +70,8 @@ const updateTransaction = async (req, res) => {
 };
 
 // Get Summary (Income / Expenses / Balance)
+const Goal = require("../models/goal");
+
 const getSummary = async (req, res) => {
   try {
     const transactions = await Transaction.find({ user: req.user._id });
@@ -82,13 +84,23 @@ const getSummary = async (req, res) => {
       .filter((t) => t.type === "expense")
       .reduce((sum, t) => sum + t.amount, 0);
 
-    const balance = income - expenses;
+    // 🔥 Get total saved into goals
+    const goals = await Goal.find({ user: req.user._id });
+    const goalsSaved = goals.reduce((sum, g) => sum + (g.savedAmount || 0), 0);
 
-    res.json({ income, expenses, balance });
+    const balance = income - expenses - goalsSaved;
+
+    res.json({
+      income,
+      expenses,
+      goalsSaved,
+      balance,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 //Export all handlers
 module.exports = {

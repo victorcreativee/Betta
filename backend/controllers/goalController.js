@@ -11,6 +11,7 @@ exports.createGoal = async (req, res) => {
       user: req.user._id,
       name,
       targetAmount,
+      savedAmount: { type: Number, default: 0 },
       deadline,
     });
 
@@ -25,34 +26,73 @@ exports.getGoalsWithProgress = async (req, res) => {
     const userId = req.user._id;
     const goals = await Goal.find({ user: userId });
 
-    const goalsWithProgress = await Promise.all(goals.map(async (goal) => {
-      const savings = await Transaction.aggregate([
-        { $match: { user: userId, category: "Savings" } },
-        {
-          $group: {
-            _id: null,
-            totalSaved: { $sum: "$amount" },
-          },
-        },
-      ]);
-
-      const totalSaved = savings[0]?.totalSaved || 0;
-      const progress = Math.min((totalSaved / goal.targetAmount) * 100, 100);
+    const goalsWithProgress = goals.map(goal => {
+      const savedAmount = goal.savedAmount || 0;
+      const progress = Math.min((savedAmount / goal.targetAmount) * 100, 100);
 
       return {
         _id: goal._id,
         name: goal.name,
         targetAmount: goal.targetAmount,
         deadline: goal.deadline,
+        savedAmount,
         progress: Math.round(progress),
       };
-    }));
+    });
 
     res.json(goalsWithProgress);
   } catch (err) {
+    console.error("Failed to load goals", err);
     res.status(500).json({ message: "Failed to load goals" });
   }
 };
+
+
+// ADD money to goal
+exports.addToGoal = async (req, res) => {
+  const { amount } = req.body;
+
+  if (!amount || amount <= 0) {
+    return res.status(400).json({ message: "Amount must be greater than zero." });
+  }
+
+  try {
+    const goal = await Goal.findOne({ _id: req.params.id, user: req.user._id });
+    if (!goal) return res.status(404).json({ message: "Goal not found." });
+
+    // 1. Save transaction
+    await Transaction.create({
+      title: `Saved for ${goal.name}`,
+      amount,
+      type: "expense",
+      category: "Savings",
+      user: req.user._id,
+      date: new Date(),
+      goal: goal._id, // ✅ attach goal ID
+    });
+
+    // 2. Increment savedAmount in goal
+    goal.savedAmount = (goal.savedAmount || 0) + amount;
+    await goal.save();
+
+    res.status(200).json({
+      message: "Amount added to goal successfully.",
+      goal: {
+        _id: goal._id,
+        name: goal.name,
+        targetAmount: goal.targetAmount,
+        savedAmount: goal.savedAmount,
+        progress: Math.min((goal.savedAmount / goal.targetAmount) * 100, 100),
+      },
+    });
+
+  } catch (err) {
+    console.error("Error adding to goal:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 
 
 // Update Goal
