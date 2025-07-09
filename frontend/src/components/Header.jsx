@@ -25,13 +25,7 @@ export default function Header() {
 
         {/* Theme toggle + user info + logout */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-            title="Toggle theme"
-          >
-            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
+          
 
           <span className="text-sm text-gray-600 dark:text-gray-300">Victor</span>
 
@@ -40,14 +34,23 @@ export default function Header() {
           </div>
 
           {/* 🔓 Logout Button */}
-          <button
+          {/* <button
             onClick={handleLogout}
             className="flex items-center gap-2 px-3 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
             title="Logout"
           >
             <LogOut size={16} />
             <span>Logout</span>
+          </button> */}
+
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+            title="Toggle theme"
+          >
+            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
+
         </div>
       </div>
     </header>

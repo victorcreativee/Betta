@@ -1,13 +1,16 @@
-import Header from "./Header";
+// src/components/Layout.jsx
 import Sidebar from "./Sidebar";
+import Header from "./Header";
 
 export default function Layout({ children }) {
   return (
-    <div className="flex">
+    <div className="flex min-h-screen bg-[#F4F9FF] dark:bg-gray-900">
       <Sidebar />
-      <div className="flex-1 ml-0 md:ml-40">
-        {/* <Header /> */}
-        <main className="p-6 bg-[#F4F9FF] min-h-screen">{children}</main>
+      <div className="flex flex-col flex-1">
+        <Header />
+        <main className="flex-1 w-full max-w-7xl mx-auto px-6 py-6">
+          {children}
+        </main>
       </div>
     </div>
   );

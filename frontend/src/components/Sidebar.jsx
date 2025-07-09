@@ -1,12 +1,19 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  CreditCard,
+  Target,
+  BarChart2,
+  Settings,
+  LogOut,
+} from "lucide-react";
 
 const navItems = [
-  { name: "Dashboard", path: "/dashboard" },
-  { name: "Transactions", path: "/transactions" },
-  { name: "Goals", path: "/goals" },
-  { name: "Reports", path: "/reports" },
-  { name: "Settings", path: "/settings" },
+  { name: "Dashboard", path: "/dashboard", icon: <LayoutDashboard size={18} /> },
+  { name: "Transactions", path: "/transactions", icon: <CreditCard size={18} /> },
+  { name: "Goals", path: "/goals", icon: <Target size={18} /> },
+  { name: "Reports", path: "/reports", icon: <BarChart2 size={18} /> },
+  { name: "Settings", path: "/settings", icon: <Settings size={18} /> },
 ];
 
 export default function Sidebar() {
@@ -25,19 +32,20 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex flex-col p-4 space-y-2 flex-1">
+      <nav className="flex flex-col p-4 space-y-1 flex-1">
         {navItems.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
             className={({ isActive }) =>
-              `block px-4 py-2 rounded-md text-sm font-medium transition ${
+              `flex items-center gap-3 px-4 py-2 rounded-md text-sm font-medium transition ${
                 isActive
                   ? "bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-300"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
               }`
             }
           >
+            {item.icon}
             {item.name}
           </NavLink>
         ))}
@@ -45,13 +53,15 @@ export default function Sidebar() {
 
       {/* Logout */}
       <div className="p-4 border-t border-gray-100 dark:border-gray-800">
-        <button
+      <button
           onClick={handleLogout}
           className="flex items-center gap-2 w-full text-sm text-gray-500 hover:text-red-500 transition"
         >
-          <LogOut size={16} />
+          <LogOut size={18} />
           Logout
         </button>
+
+        
       </div>
     </aside>
   );

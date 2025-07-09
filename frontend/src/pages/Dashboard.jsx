@@ -138,7 +138,7 @@ export default function Dashboard() {
           {/* <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Dashboard</h2> */}
           <button
             onClick={() => setShowModal(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+            className="bg-blue-500 text-white px-2 py-2 rounded-lg hover:bg-blue-600 transition"
           >
             + Add Transaction
           </button>
@@ -159,7 +159,7 @@ export default function Dashboard() {
 
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <SummaryCard title="Total Balance" amount={`$${summary.balance.toFixed(2)}`} color="text-blue-500" />
           <SummaryCard title="Income" amount={`$${summary.income.toFixed(2)}`} color="text-green-500" />
           <SummaryCard title="Expenses" amount={`$${summary.expenses.toFixed(2)}`} color="text-red-500" />
