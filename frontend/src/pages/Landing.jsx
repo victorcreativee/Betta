@@ -53,7 +53,7 @@ export default function Landing() {
           transition={{ delay: 0.9, duration: 0.6 }}
         >
           <Link
-            to="/signup"
+            to="/Register"
             className="bg-primary text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-600"
           >
             Get Started

@@ -1,7 +1,8 @@
 import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
-import { Sun, Moon, LogOut } from "lucide-react"; 
+import { Sun, Moon } from "lucide-react"; 
 import { useNavigate } from "react-router-dom";
+
 
 export default function Header() {
   const { darkMode, setDarkMode } = useContext(ThemeContext);
@@ -9,8 +10,12 @@ export default function Header() {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    navigate("/login");
+    navigate("/");
   };
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  const username = user?.name || "User";
+  const initial = username?.charAt(0)?.toUpperCase() || "U";
 
   return (
     <header className="bg-white dark:bg-gray-900 shadow-sm px-6 py-4 flex justify-between items-center sticky top-0 z-30">
@@ -26,11 +31,9 @@ export default function Header() {
         {/* Theme toggle + user info + logout */}
         <div className="flex items-center gap-3">
           
-
-          <span className="text-sm text-gray-600 dark:text-gray-300">Victor</span>
-
+          <span className="text-sm text-gray-600 dark:text-gray-300">{username}</span>
           <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold">
-            V
+            {initial}
           </div>
 
           {/* 🔓 Logout Button */}
