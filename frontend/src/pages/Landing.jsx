@@ -16,7 +16,7 @@ export default function Landing() {
         transition={{ duration: 0.6 }}
       >
         <h1 className="text-2xl font-bold text-blue-500">Betta</h1>
-        <nav className="space-x-6 text-sm font-medium flex items-center">
+        <nav className="space-x-8 text-sm font-medium flex items-center">
           <ScrollLink to="features" smooth={true} duration={500} offset={-80} className="hover:text-blue-600 cursor-pointer" href="#">
             Features
           </ScrollLink>
@@ -34,14 +34,14 @@ export default function Landing() {
 
       {/* Hero Section */}
       <main className="flex-1 flex flex-col items-center justify-center text-center px-6 relative">
-        <div className="absolute top-10 left-10 w-56 h-56 bg-blue-200 rounded-full opacity-30 blur-3xl animate-pulse" />
+        <div className="absolute top-20 left-10 w-56 h-56 bg-blue-200 rounded-full opacity-30 blur-3xl animate-pulse" />
         <div className="absolute bottom-20 right-20 w-72 h-72 bg-primary rounded-full opacity-20 blur-2xl" />
 
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.6 }}
-          className="text-5xl font-extrabold mb-4 max-w-2xl"
+          className="text-5xl font-extrabold mb-8 max-w-2xl pt-10"
         >
           Take Control of Your Budget with Betta
         </motion.h2>
@@ -87,10 +87,10 @@ export default function Landing() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-          <FeatureItem title="Real-Time Tracking" text="Track income and expenses as they happen — always know where your money is." />
+          <FeatureItem title="Real-Time Tracking" text="Track income and expenses as they happen always know where your money is." />
           <FeatureItem title="Goal Setting" text="Set savings goals and monitor progress visually, so you stay motivated and accountable." />
           <FeatureItem title="Visual Insights" text="Pie charts, line graphs, and radial progress bars to help you understand your habits." />
-          <FeatureItem title="Simple Interface" text="Designed to feel effortless — smooth UI with a calming light-blue theme." />
+          <FeatureItem title="Simple Interface" text="Designed to feel effortless smooth UI with a calming light-blue theme." />
         </div>
       </section>
 
@@ -105,8 +105,8 @@ export default function Landing() {
 
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           <ValueItem title="Built for Simplicity" text="Minimal clicks. Fast input. Everything where you expect it." />
-          <ValueItem title="Designed for Clarity" text="No clutter — just numbers and insights that make sense." />
-          <ValueItem title="Goals Made Visible" text="Your progress is always visual — not just numbers, but purpose." />
+          <ValueItem title="Designed for Clarity" text="No clutter  just numbers and insights that make sense." />
+          <ValueItem title="Goals Made Visible" text="Your progress is always visual not just numbers, but purpose." />
         </div>
       </section>
 
@@ -118,9 +118,9 @@ export default function Landing() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          <TestimonialCard name="Sarah M." text="Betta completely changed the way I budget. Simple and stress-free." />
-          <TestimonialCard name="James L." text="I finally feel in control of my finances thanks to the goal setting tools." />
-          <TestimonialCard name="Lina K." text="Beautiful interface and very intuitive. Love the visualizations!" />
+          <TestimonialCard name="Kalisa C." text="Betta completely changed the way I budget. Simple and stress-free." />
+          <TestimonialCard name="Muhire L." text="I finally feel in control of my finances thanks to the goal setting tools." />
+          <TestimonialCard name="Victor T." text="Beautiful interface and very intuitive. Love the visualizations!" />
         </div>
       </section>
 

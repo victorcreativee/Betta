@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import AuthHeader from '../components/AuthHeader';
+import AuthFooter from '../components/AuthFooter';
 
-export default function SignupModal({ onClose }) {
+function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [feedback, setFeedback] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError('');
+    setLoading(true);
+    setFeedback('');
 
     try {
       const res = await fetch('http://localhost:5050/api/users/register', {
@@ -21,31 +24,38 @@ export default function SignupModal({ onClose }) {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Registration failed');
+      setLoading(false);
+
+      if (!res.ok) {
+        setFeedback(
+          res.status === 409
+            ? 'Account already exists. Please log in instead.'
+            : data.message || 'Registration failed.'
+        );
+        return;
+      }
 
       localStorage.setItem('user', JSON.stringify(data));
-      onClose(); // close modal
-      navigate('/dashboard'); // redirect
+      navigate('/dashboard');
     } catch (err) {
-      setError(err.message);
+      setLoading(false);
+      setFeedback('Something went wrong. Please try again.');
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <motion.div
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 30 }}
-        className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg"
-      >
-        <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
-        {error && <p className="text-red-500 text-center mb-2">{error}</p>}
+    <>
+      <AuthHeader />
+      <main className="max-w-md mx-auto mt-20 p-8 bg-white rounded-lg shadow">
+        <h2 className="text-2xl font-bold mb-6 text-center text-green-600">Create Your Betta Account</h2>
+
+        {feedback && <p className="text-red-500 text-sm text-center mb-4">{feedback}</p>}
+
         <form onSubmit={handleRegister} className="space-y-4">
           <input
             type="text"
             placeholder="Name"
-            className="w-full p-2 border rounded"
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-400"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -53,7 +63,7 @@ export default function SignupModal({ onClose }) {
           <input
             type="email"
             placeholder="Email"
-            className="w-full p-2 border rounded"
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-400"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -61,25 +71,29 @@ export default function SignupModal({ onClose }) {
           <input
             type="password"
             placeholder="Password"
-            className="w-full p-2 border rounded"
+            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-400"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
           <button
             type="submit"
-            className="w-full bg-green-500 text-white px-4 py-2 rounded"
+            className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
           >
-            Register
+            {loading ? 'Creating account...' : 'Register'}
           </button>
         </form>
-        <button
-          onClick={onClose}
-          className="mt-4 text-sm text-blue-500 hover:underline w-full text-center"
-        >
-          Cancel
-        </button>
-      </motion.div>
-    </div>
+
+        <div className="text-sm text-center mt-4">
+          Already have an account?{' '}
+          <a href="/login" className="text-green-500 hover:underline">
+            Log in
+          </a>
+        </div>
+      </main>
+      <AuthFooter />
+    </>
   );
 }
+
+export default Register;
