@@ -1,11 +1,9 @@
 # Betta – Budget Management App
 
-Betta is a personal budget management web application designed to help users track income, expenses, and savings. Built using the MERN (MongoDB, Express, React, Node.js) stack.
-
-    **Set Goals**  
-    **Track Income & Expenses**  
-    **Visualize Progress**  
-
+Betta is a clean and modern web application designed to help users manage their personal finances efficiently.  
+✅ **Set Goals**  
+✅ **Track Income & Expenses**  
+✅ **Visualize Progress**  
 All in one intuitive dashboard.
 
 ---

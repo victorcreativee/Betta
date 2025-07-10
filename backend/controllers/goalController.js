@@ -11,15 +11,16 @@ exports.createGoal = async (req, res) => {
       user: req.user._id,
       name,
       targetAmount,
-      savedAmount: { type: Number, default: 0 },
-      deadline,
+      savedAmount: 0, 
     });
 
     res.status(201).json(goal);
   } catch (err) {
+    console.error("Goal creation error:", err);
     res.status(400).json({ message: "Failed to create goal" });
   }
 };
+
 
 exports.getGoalsWithProgress = async (req, res) => {
   try {
@@ -64,11 +65,11 @@ exports.addToGoal = async (req, res) => {
     await Transaction.create({
       title: `Saved for ${goal.name}`,
       amount,
-      type: "expense",
+      type: "transfer",
       category: "Savings",
       user: req.user._id,
       date: new Date(),
-      goal: goal._id, // ✅ attach goal ID
+      goal: goal._id, 
     });
 
     // 2. Increment savedAmount in goal

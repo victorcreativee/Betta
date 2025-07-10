@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  googleId: String,
 }, { timestamps: true });
 
 // Hash password before saving
@@ -20,4 +21,7 @@ userSchema.methods.matchPassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-module.exports = mongoose.model('User', userSchema);
+
+const User = mongoose.models.User || mongoose.model('User', userSchema);
+
+module.exports = User;

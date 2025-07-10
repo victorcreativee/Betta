@@ -5,6 +5,12 @@ const connectDB = require("./config/db");
 const userRoutes = require('./routes/userRoutes');
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const goalRoutes = require("./routes/goalRoutes");
+const passport = require('passport');
+const session = require('express-session');
+
+// path to the config 
+require('dotenv').config();
+require('./config/passport');
 
 // Load env variables
 dotenv.config();
@@ -25,9 +31,16 @@ app.get("/", (req, res) => res.send("🎉 Betta backend running"));
 
 app.use('/api/users', userRoutes);
 
+
+
 app.use("/api/dashboard", dashboardRoutes);
 
 app.use("/api/goals", goalRoutes);
+
+app.use(session({ secret: 'yourSecret', resave: false, saveUninitialized: false }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => console.log(`Server on http://localhost:${PORT}`));

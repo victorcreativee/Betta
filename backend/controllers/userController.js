@@ -52,4 +52,42 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+// @desc Google login or register
+// @route POST /api/users/google-login
+// @access Public
+const googleLogin = async (req, res) => {
+  const { name, email, avatar, googleId } = req.body;
+
+  try {
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Create user if not found
+      console.log(" Creating new user...");
+      user = await User.create({
+        name,
+        email,
+        password: googleId, // Google users don't need actual password
+        avatar,
+        googleId,
+      });
+    } else {
+        console.log("Existing user found:", user.email);
+    }
+
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      token: generateToken(user._id),
+    });
+
+  } catch (error) {
+    console.error("Google login error:", error);
+    res.status(500).json({ message: "Google login failed" });
+  }
+};
+
+
+module.exports = { registerUser, loginUser, googleLogin };
