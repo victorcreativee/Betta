@@ -176,24 +176,32 @@ export default function Dashboard() {
         {/*  Advanced Insights */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <DashboardCard title="Recent Trends" icon={<TrendingUp size={20} />}>
-          <ul className="space-y-1">
+          <ul className="space-y-3">
             {recentTrends.map((t, i) => (
-              <li key={i}>
-                {new Date(t.date).toLocaleDateString()}: {t.category} — {t.amount} RWF
+              <li key={i} className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
+                <span>{new Date(t.date).toLocaleDateString()} — {t.category}</span>
+                <span className="font-medium text-blue-600 dark:text-blue-400">
+                  {t.amount.toLocaleString()} RWF
+                </span>
               </li>
             ))}
           </ul>
         </DashboardCard>
 
+
         <DashboardCard title="Top Categories" icon={<BarChart2 size={20} />}>
-          <ul className="space-y-1">
+          <ul className="space-y-3">
             {topCategories.map((cat, i) => (
-              <li key={i}>
-                {cat.category}: {cat.total} RWF
+              <li key={i} className="flex justify-between text-sm text-gray-700 dark:text-gray-300">
+                <span className="capitalize">{cat.category}</span>
+                <span className="font-medium text-green-600 dark:text-green-400">
+                  {cat.total.toLocaleString()} RWF
+                </span>
               </li>
             ))}
           </ul>
         </DashboardCard>
+
 
         <DashboardCard title="Smart Goal Progress" icon={<Target size={20} />}>
         <div className="space-y-3">
