@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -30,11 +32,39 @@ export default function Login() {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const decoded = jwtDecode(credentialResponse.credential);
+
+      const res = await fetch("http://localhost:5050/api/users/google-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: decoded.name,
+          email: decoded.email,
+          avatar: decoded.picture,
+          googleId: decoded.sub,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Google login failed");
+
+      localStorage.setItem("user", JSON.stringify(data));
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Google Auth Error:", err.message);
+      setError("Google sign-in failed. Please try again.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex flex-col">
       {/* Header */}
       <header className="flex justify-between items-center p-6">
-        <Link to="/" ><h1 className="text-2xl font-bold text-blue-500">Betta</h1></Link>
+        <Link to="/">
+          <h1 className="text-2xl font-bold text-blue-500">Betta</h1>
+        </Link>
         <p className="text-sm">
           Don’t have an account?{" "}
           <Link
@@ -53,11 +83,10 @@ export default function Login() {
             Welcome back!
           </h2>
 
-          {/* Google Placeholder */}
-          <button className="w-full flex items-center justify-center gap-2 border border-gray-300 px-4 py-2 rounded hover:bg-gray-100 transition">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
-            Continue with Google
-          </button>
+          {/* Google Login */}
+          <div className="w-full flex justify-center mb-6">
+            <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => setError("Google login failed")} />
+          </div>
 
           <div className="my-6 flex items-center gap-2 text-sm text-gray-400">
             <hr className="flex-grow border-gray-300" />
@@ -67,7 +96,7 @@ export default function Login() {
 
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
-          {/* Login Form */}
+          {/* Email Login Form */}
           <form onSubmit={handleLogin} className="space-y-4 text-left">
             <div>
               <label className="text-sm font-medium text-gray-600">Email</label>
