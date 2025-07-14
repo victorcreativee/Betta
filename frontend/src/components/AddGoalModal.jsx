@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "../api/axios"; // ✅ import your axios instance
 
 export default function AddGoalModal({ isOpen, onClose, onSuccess }) {
   const [name, setName] = useState("");
@@ -12,16 +13,15 @@ export default function AddGoalModal({ isOpen, onClose, onSuccess }) {
       const user = JSON.parse(localStorage.getItem("user"));
       const token = user?.token;
 
-      const res = await fetch("http://localhost:5050/api/goals", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ name, targetAmount, deadline }),
-      });
-
-      if (!res.ok) throw new Error("Failed to create goal");
+      await axios.post(
+        "/goals",
+        { name, targetAmount, deadline },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       onSuccess();
       onClose();
@@ -29,7 +29,7 @@ export default function AddGoalModal({ isOpen, onClose, onSuccess }) {
       setTargetAmount("");
       setDeadline("");
     } catch (err) {
-      console.error(err.message);
+      console.error("Failed to create goal:", err.response?.data?.message || err.message);
     }
   };
 
