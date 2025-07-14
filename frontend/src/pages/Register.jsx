@@ -3,6 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+import axios from "../api/axios";
+
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -11,25 +13,23 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
-
+  
     try {
-      const res = await fetch("http://localhost:5050/api/users/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+      const res = await axios.post("/users/register", {
+        name,
+        email,
+        password,
       });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Registration failed");
-
-      localStorage.setItem("user", JSON.stringify(data));
+  
+      localStorage.setItem("user", JSON.stringify(res.data));
       navigate("/dashboard");
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || "Registration failed");
     }
   };
 
@@ -39,16 +39,23 @@ export default function Register() {
 
       console.log(" Google decoded:", decoded);
 
-      const res = await fetch("http://localhost:5050/api/users/google-login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: decoded.name,
-          email: decoded.email,
-          avatar: decoded.picture,
-          googleId: decoded.sub,
-        }),
+      const res = await axios.post("/users/google-login", {
+        name: decoded.name,
+        email: decoded.email,
+        avatar: decoded.picture,
+        googleId: decoded.sub,
       });
+
+      // const res = await fetch("http://localhost:5050/api/users/google-login", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({
+      //     name: decoded.name,
+      //     email: decoded.email,
+      //     avatar: decoded.picture,
+      //     googleId: decoded.sub,
+      //   }),
+      // });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Google sign-up failed");

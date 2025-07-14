@@ -16,7 +16,7 @@ connectDB();
 
 const app = express();
 
-// ✅ CORS Configuration
+//  CORS Configuration
 const allowedOrigins = [
   "http://localhost:3000", // local frontend
   "https://betta-seven.vercel.app", // Vercel frontend
@@ -37,25 +37,25 @@ app.use(
     })
   );
 
-// ✅ Middleware
+//  Middleware
 app.use(express.json());
 app.use(session({ secret: "yourSecret", resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ✅ Routes
+//  Routes
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/transactions", require("./routes/transactionRoutes"));
 app.use("/api/dashboard", require("./routes/dashboardRoutes"));
 app.use("/api/goals", require("./routes/goalRoutes"));
 
 
-// ✅ Root Test Route
+//  Root Test Route
 app.get("/", (req, res) => {
   res.send("🎉 Betta backend running");
 });
 
-// ✅ Start Server
+//  Start Server
 const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
