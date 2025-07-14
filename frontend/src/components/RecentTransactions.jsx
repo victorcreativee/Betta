@@ -153,6 +153,7 @@ export default function RecentTransactions({ onSuccess }) {
         onClose={() => setShowEditModal(false)}
         onSuccess={() => {
           fetchTransactions();
+          onSuccess && onSuccess(); 
           setShowEditModal(false);
         }}
         transaction={editingTransaction}

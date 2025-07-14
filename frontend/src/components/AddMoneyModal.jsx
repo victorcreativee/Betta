@@ -25,7 +25,7 @@ export default function AddMoneyModal({ isOpen, onClose, goals, onSuccess }) {
       setSelectedGoalId("");
       onSuccess();
     } catch (err) {
-      console.error("Failed to add money to goal:", err.message);
+      console.error("Failed to add money to goal:", err);
     }
   };
 

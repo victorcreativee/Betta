@@ -43,16 +43,31 @@ const getTransactions = async (req, res) => {
   }
 };
 
-// Delete Transaction
+// Delete Transaction 
 const deleteTransaction = async (req, res) => {
   try {
     const { id } = req.params;
-    await Transaction.findOneAndDelete({ _id: id, user: req.user._id });
+
+    const transaction = await Transaction.findOne({ _id: id, user: req.user._id });
+    if (!transaction) return res.status(404).json({ message: "Transaction not found" });
+
+    // 🧠 If it was a savings transaction, deduct from the goal
+    if (transaction.type === "transfer" && transaction.goal) {
+      const goal = await Goal.findOne({ _id: transaction.goal, user: req.user._id });
+      if (goal) {
+        goal.savedAmount = Math.max(0, goal.savedAmount - transaction.amount);
+        await goal.save();
+      }
+    }
+
+    await Transaction.deleteOne({ _id: id });
+
     res.status(200).json({ message: "Transaction deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 // Update Transaction
 const updateTransaction = async (req, res) => {

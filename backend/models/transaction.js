@@ -27,6 +27,10 @@ const transactionSchema = new mongoose.Schema(
        type: String, 
        default: "General" 
       },
+      goal: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Goal",       
+      },
     },
   { timestamps: true }
 );
