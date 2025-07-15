@@ -58,10 +58,11 @@ export default function Register() {
       // });
 
       const data = res.data; 
-      if (!res.ok) throw new Error(data.message || "Google sign-up failed");
+      // if (!res.ok) throw new Error(data.message || "Google sign-up failed");
 
       localStorage.setItem("user", JSON.stringify(data));
       navigate("/dashboard");
+
     } catch (err) {
       console.error("Google Auth Error:", err.message);
       alert("Google sign-up failed. Please try again.");
